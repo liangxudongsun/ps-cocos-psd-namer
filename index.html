@@ -38,23 +38,23 @@
     <button class="warnb full" onclick="apply('')">去掉前缀（还原）</button>
   </div>
 
-  <h4>其他类型 <span class="wiptag">功能未实现</span></h4>
+  <h4>其他类型 <span class="wiptag">实验性</span></h4>
   <div class="grid">
-    <button disabled title="功能未实现，暂不可用">lbl_ 文本</button>
-    <button disabled title="功能未实现，暂不可用">rt_ 富文本</button>
-    <button disabled title="功能未实现，暂不可用">sp_ 九宫格</button>
-    <button disabled title="功能未实现，暂不可用">node_ 容器</button>
-    <button disabled title="功能未实现，暂不可用">mask_ 遮罩</button>
-    <button disabled title="功能未实现，暂不可用">edit_ 输入框</button>
-    <button disabled title="功能未实现，暂不可用">prog_ 进度条</button>
-    <button disabled title="功能未实现，暂不可用">tog_ 开关</button>
-    <button disabled title="功能未实现，暂不可用">lay_v_ 纵向</button>
-    <button disabled title="功能未实现，暂不可用">lay_h_ 横向</button>
-    <button disabled title="功能未实现，暂不可用">lay_grid_ 网格</button>
-    <button disabled title="功能未实现，暂不可用">sv_ 滚动视图</button>
-    <button disabled title="功能未实现，暂不可用">ref_ 参考</button>
-    <button disabled title="功能未实现，暂不可用">tmp_ 临时</button>
-    <button disabled title="功能未实现，暂不可用">// 注释</button>
+    <button onclick="apply('lbl_')">lbl_ 文本</button>
+    <button onclick="apply('rt_')">rt_ 富文本</button>
+    <button onclick="apply('sp_')">sp_ 九宫格</button>
+    <button onclick="apply('node_')">node_ 容器</button>
+    <button onclick="apply('mask_')">mask_ 遮罩</button>
+    <button onclick="apply('edit_')">edit_ 输入框</button>
+    <button onclick="apply('prog_')">prog_ 进度条</button>
+    <button onclick="apply('tog_')">tog_ 开关</button>
+    <button onclick="apply('lay_v_')">lay_v_ 纵向</button>
+    <button onclick="apply('lay_h_')">lay_h_ 横向</button>
+    <button onclick="apply('lay_grid_')">lay_grid_ 网格</button>
+    <button onclick="apply('sv_')">sv_ 滚动视图</button>
+    <button onclick="apply('ref_')">ref_ 参考</button>
+    <button onclick="apply('tmp_')">tmp_ 临时</button>
+    <button onclick="apply('//')">// 注释</button>
   </div>
 
   <div class="opt">
@@ -67,7 +67,8 @@
   <div class="hint">当前仅 <small>btn_ 按钮</small> 与 <small>! 忽略</small> 已接入转换器:<br>
     · btn_ → 转 prefab 时生成 cc.Button，节点名加 <small>Btn_</small> 前缀;<br>
     · ! → 该图层及其所有子图层都不导出(整组跳过)。<br>
-    支持多选图层批量改名;再点别的按钮会自动替换前缀。其他类型待实现。</div>
+    支持多选图层批量改名;再点别的按钮会自动替换前缀。<br>
+    「实验性」按钮也可正常加前缀,只是转换器对这些类型的支持尚在完善。</div>
 </div>
 
 <script>

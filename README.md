@@ -60,6 +60,16 @@ Anastasiy's Extension Manager **拖入即可安装**，无需开 PlayerDebugMode
 
 > 注：`cert.p12`（含私钥）和 `*.zxp` 已被 `.gitignore` 忽略，不会误传到仓库。
 
+**自动发布（GitHub Actions）**：推一个 `v*` tag 即可让 CI 自动打包并把 `.zxp` 挂到 Release：
+
+```bash
+git tag v1.0.0 && git push origin v1.0.0
+```
+
+工作流 `.github/workflows/release-zxp.yml` 会在 `windows-latest` 上自动下载
+`ZXPSignCmd`、现场生成自签证书、签名打包 —— **无需配置任何 Secret**。
+（也可在 Actions 页面手动触发，产物作为 artifact 下载。）
+
 ---
 
 ### 2. 允许未签名扩展(PlayerDebugMode)

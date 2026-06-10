@@ -1,0 +1,62 @@
+name: Build & Release ZXP
+
+# 打 tag(如 v1.0.0)时自动构建 .zxp 并挂到 GitHub Release。
+# 也可在 Actions 页面手动触发(workflow_dispatch),产物作为 artifact 下载。
+on:
+  push:
+    tags:
+      - 'v*'
+  workflow_dispatch:
+
+permissions:
+  contents: write          # 创建 Release / 上传产物需要
+
+jobs:
+  build:
+    runs-on: windows-latest
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v4
+
+      - name: Download ZXPSignCmd
+        shell: pwsh
+        run: |
+          $url = 'https://raw.githubusercontent.com/Adobe-CEP/CEP-Resources/master/ZXPSignCMD/4.1.3/x64/ZXPSignCmd.exe'
+          Invoke-WebRequest -Uri $url -OutFile ZXPSignCmd.exe
+          if ((Get-Item ZXPSignCmd.exe).Length -lt 100000) { throw 'ZXPSignCmd download looks wrong' }
+
+      - name: Generate self-signed cert
+        shell: pwsh
+        run: |
+          # 自签证书,CI 现场生成,无需 Secrets。ZXP Installer 安装时不校验证书。
+          ./ZXPSignCmd.exe -selfSignedCert CN Shanghai Cocos "Cocos PSD Namer" cocospsd cert.p12
+
+      - name: Stage extension files
+        shell: pwsh
+        run: |
+          $stage = '_zxp_build/com.cocos.psdnamer'
+          New-Item -ItemType Directory -Force -Path $stage | Out-Null
+          # 只放扩展本体,排除脚本/证书/.git/.github/产物
+          robocopy . $stage /MIR /XD .git .github _zxp_build /XF *.bat *.p12 *.zxp ZXPSignCmd.exe
+          # robocopy 退出码 < 8 都算成功,需手动归一化,否则会让步骤误判失败
+          if ($LASTEXITCODE -ge 8) { exit 1 } else { exit 0 }
+
+      - name: Sign & package .zxp
+        shell: pwsh
+        run: |
+          ./ZXPSignCmd.exe -sign _zxp_build/com.cocos.psdnamer cocos-psd-namer.zxp cert.p12 cocospsd -tsa http://timestamp.digicert.com
+          if (-not (Test-Path cocos-psd-namer.zxp)) { throw 'zxp not produced' }
+          Get-Item cocos-psd-namer.zxp | Format-List Name, Length
+
+      - name: Upload build artifact
+        uses: actions/upload-artifact@v4
+        with:
+          name: cocos-psd-namer-zxp
+          path: cocos-psd-namer.zxp
+
+      - name: Attach to Release
+        if: startsWith(github.ref, 'refs/tags/')
+        uses: softprops/action-gh-release@v2
+        with:
+          files: cocos-psd-namer.zxp
+          generate_release_notes: true

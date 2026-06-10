@@ -115,21 +115,21 @@ function cpx_apply(prefix, replace){
     if (!app.documents.length) return 'ERR:no document';
     var ids = cpx_selectedIDs();
     if (!ids.length) return 'ERR:no layer selected';
-    var done = 0, failed = 0, lastErr = '';
+    var renamed = 0, unchanged = 0, failed = 0, lastErr = '';
     // per-layer try/catch: one failing layer must NOT abort the rest of the batch
     for (var i = 0; i < ids.length; i++){
         try {
             var cur = cpx_getNameByID(ids[i]);
             var nn  = cpx_newName(cur, prefix, replace);
-            if (nn !== cur){ cpx_setNameByID(ids[i], nn); }
-            done++;
+            if (nn !== cur){ cpx_setNameByID(ids[i], nn); renamed++; }
+            else { unchanged++; } // already had the target prefix -> nothing to do
         } catch (e) {
             failed++; lastErr = e.toString();
         }
     }
-    if (done === 0) return 'ERR:' + (lastErr || 'rename failed');
-    if (failed > 0) return 'OK:' + done + '/' + ids.length; // partial: panel shows "X/Y"
-    return 'OK:' + done;
+    if (renamed === 0 && unchanged === 0) return 'ERR:' + (lastErr || 'rename failed');
+    // report breakdown so "renamed" vs "already-correct" vs "failed" is unambiguous
+    return 'OK:' + renamed + ',' + unchanged + ',' + failed;
 }
 
 // DIAGNOSTIC — called by the panel's 诊断 button. Reports exactly what the

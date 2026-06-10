@@ -96,8 +96,13 @@ function apply(prefix){
   csi.evalScript(script, function(r){
     r = String(r || '');
     if (r.indexOf('OK:') === 0){
-      var n = r.substring(3);
-      setRes('已处理 ' + n + ' 个图层 → ' + (prefix === '' ? '去前缀' : "前缀 " + prefix), false);
+      var parts = r.substring(3).split(',');
+      var rn = +(parts[0] || 0), un = +(parts[1] || 0), fa = +(parts[2] || 0);
+      var msg = '改名 ' + rn + ' 个';
+      if (un) msg += '，已是该前缀 ' + un + ' 个';
+      if (fa) msg += '，失败 ' + fa + ' 个';
+      msg += ' → ' + (prefix === '' ? '去前缀' : '前缀 ' + prefix);
+      setRes(msg, fa > 0);
     } else if (r.indexOf('ERR:') === 0){
       var m = r.substring(4);
       if (m === 'no layer selected') setRes('请先选中至少一个图层', true);

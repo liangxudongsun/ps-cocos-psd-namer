@@ -47,6 +47,21 @@
 
 (没有 `CEP\extensions` 目录就手动新建。)
 
+### 方式 C：打包 .zxp 分发给团队（免 PlayerDebugMode）
+
+想发给同事、不让他们碰注册表，就把扩展打包成已签名的 `.zxp`：
+
+1. 到 [Adobe CEP-Resources](https://github.com/Adobe-CEP/CEP-Resources) 下载 `ZXPSignCmd.exe`，
+   放到本文件夹旁边（或 `tools\` 子目录，或加入 PATH）；
+2. 双击 **`build-zxp.bat`** —— 它会自动生成自签证书并打包出 `cocos-psd-namer.zxp`。
+
+同事拿到 `.zxp` 后，用 [ZXP Installer](https://aescripts.com/learn/zxp-installer/) 或
+Anastasiy's Extension Manager **拖入即可安装**，无需开 PlayerDebugMode。
+
+> 注：`cert.p12`（含私钥）和 `*.zxp` 已被 `.gitignore` 忽略，不会误传到仓库。
+
+---
+
 ### 2. 允许未签名扩展(PlayerDebugMode)
 本扩展未做 ZXP 签名,需开启调试模式:
 
@@ -85,5 +100,6 @@ com.cocos.psdnamer/
 ├── index.html          面板 UI(按钮 + 逻辑,内置极简 CSInterface)
 ├── host.jsx            ExtendScript:按 ID 给选中图层加/换/去前缀
 ├── install.bat         一键安装(拷贝 + 开 PlayerDebugMode)
-└── uninstall.bat       一键卸载
+├── uninstall.bat       一键卸载
+└── build-zxp.bat       打包成已签名 .zxp(自签证书,供团队分发)
 ```

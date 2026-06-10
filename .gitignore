@@ -5,3 +5,7 @@ Thumbs.db
 
 # build output (if you later sign/package a .zxp)
 *.zxp
+_zxp_build/
+
+# signing cert + key — never commit (contains private key)
+*.p12

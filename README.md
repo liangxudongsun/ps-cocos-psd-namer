@@ -21,7 +21,23 @@
 | ref_ / tmp_ / // / ! | 同名 | 转换时**忽略**该层 |
 | 去掉前缀 | (清空) | 还原成无前缀 |
 
-## 安装（一次性）
+## 安装
+
+### 方式 A：一键安装（推荐，Windows）
+
+双击仓库里的 **`install.bat`** 即可，它会自动：
+
+1. 把扩展拷到 `%APPDATA%\Adobe\CEP\extensions\com.cocos.psdnamer\`；
+2. 给 `CSXS.6 ~ CSXS.12` 写入 `PlayerDebugMode=1`（允许未签名扩展，省去手动改注册表）。
+
+全程写 `HKCU` + `%APPDATA%`，**不需要管理员权限**。装完**完全退出并重启 Photoshop**，
+在菜单 **窗口 / 扩展功能(旧版) → Cocos PSD Namer** 打开面板即可。
+
+> 卸载：双击 **`uninstall.bat`**。
+
+---
+
+### 方式 B：手动安装（一次性）
 
 ### 1. 放到 CEP 扩展目录
 把本文件夹(含 `CSXS/`、`index.html`、`host.jsx`)整个复制到,并改名为 `com.cocos.psdnamer`:
@@ -67,5 +83,7 @@
 com.cocos.psdnamer/
 ├── CSXS/manifest.xml   扩展清单(host=PHXS, panel)
 ├── index.html          面板 UI(按钮 + 逻辑,内置极简 CSInterface)
-└── host.jsx            ExtendScript:按 ID 给选中图层加/换/去前缀
+├── host.jsx            ExtendScript:按 ID 给选中图层加/换/去前缀
+├── install.bat         一键安装(拷贝 + 开 PlayerDebugMode)
+└── uninstall.bat       一键卸载
 ```

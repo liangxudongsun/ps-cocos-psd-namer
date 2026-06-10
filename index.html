@@ -1,0 +1,108 @@
+<!DOCTYPE html>
+<html>
+<head>
+<meta charset="utf-8">
+<title>Cocos PSD Namer</title>
+<style>
+  html,body{margin:0;padding:0;background:#323232;color:#d8d8d8;
+    font-family:-apple-system,"Segoe UI","Microsoft YaHei",sans-serif;font-size:12px;}
+  .wrap{padding:8px 8px 14px;}
+  h4{margin:10px 2px 4px;font-size:11px;color:#9aa7b4;font-weight:600;text-transform:uppercase;letter-spacing:.5px;}
+  .grid{display:grid;grid-template-columns:1fr 1fr;gap:6px;}
+  button{appearance:none;border:1px solid #555;background:#3d3d3d;color:#e6e6e6;
+    border-radius:4px;padding:7px 4px;font-size:12px;cursor:pointer;text-align:center;}
+  button:hover{background:#484848;}
+  button:active{background:#2b6cb0;border-color:#2b6cb0;color:#fff;}
+  button.prim{background:#2b6cb0;border-color:#2b6cb0;color:#fff;}
+  button.warnb{border-color:#7a5;color:#d6a32a;}
+  .full{grid-column:1 / -1;}
+  .opt{display:flex;align-items:center;gap:6px;margin:8px 2px 2px;color:#bbb;}
+  .res{margin-top:10px;padding:7px 8px;border:1px solid #444;border-radius:4px;
+    background:#2a2a2a;min-height:16px;color:#9fe;white-space:pre-wrap;word-break:break-all;font-size:11px;}
+  .res.err{color:#e08;border-color:#844;}
+  .hint{color:#777;font-size:10.5px;margin:8px 2px 0;line-height:1.5;}
+  small{color:#888;}
+</style>
+</head>
+<body>
+<div class="wrap">
+
+  <h4>类型 · 组件</h4>
+  <div class="grid">
+    <button onclick="apply('btn_')">btn_ 按钮</button>
+    <button onclick="apply('lbl_')">lbl_ 文本</button>
+    <button onclick="apply('rt_')">rt_ 富文本</button>
+    <button onclick="apply('sp_')">sp_ 九宫格</button>
+    <button onclick="apply('node_')">node_ 容器</button>
+    <button onclick="apply('mask_')">mask_ 遮罩</button>
+    <button onclick="apply('edit_')">edit_ 输入框</button>
+    <button onclick="apply('prog_')">prog_ 进度条</button>
+    <button onclick="apply('tog_')">tog_ 开关</button>
+  </div>
+
+  <h4>布局 · 容器</h4>
+  <div class="grid">
+    <button onclick="apply('lay_v_')">lay_v_ 纵向</button>
+    <button onclick="apply('lay_h_')">lay_h_ 横向</button>
+    <button onclick="apply('lay_grid_')">lay_grid_ 网格</button>
+    <button onclick="apply('sv_')">sv_ 滚动视图</button>
+  </div>
+
+  <h4>忽略 · 标记</h4>
+  <div class="grid">
+    <button onclick="apply('ref_')">ref_ 参考</button>
+    <button onclick="apply('tmp_')">tmp_ 临时</button>
+    <button onclick="apply('//')">// 注释</button>
+    <button onclick="apply('!')">! 忽略</button>
+    <button class="warnb full" onclick="apply('')">去掉前缀（还原）</button>
+  </div>
+
+  <div class="opt">
+    <input type="checkbox" id="replace" checked>
+    <label for="replace">切换前缀时先去掉旧前缀</label>
+  </div>
+
+  <div class="res" id="res">选中一个或多个图层，点上面的按钮加前缀。</div>
+
+  <div class="hint">前缀含义见 <small>PSD命名规范.md</small>。规范由 cocos-psd-prefab-2x 转换器解析。<br>
+    支持多选图层批量改名;再点别的前缀会自动替换。</div>
+</div>
+
+<script>
+// minimal CSInterface shim (only evalScript is needed)
+function CSInterface(){}
+CSInterface.prototype.evalScript = function(script, cb){
+  if (typeof window.__adobe_cep__ !== 'undefined'){
+    window.__adobe_cep__.evalScript(script, cb || function(){});
+  } else if (cb) { cb('ERR:not in Photoshop/CEP'); }
+};
+var csi = new CSInterface();
+
+function setRes(txt, isErr){
+  var el = document.getElementById('res');
+  el.textContent = txt;
+  el.className = 'res' + (isErr ? ' err' : '');
+}
+
+function apply(prefix){
+  var replace = document.getElementById('replace').checked;
+  var p = String(prefix).replace(/\\/g,'\\\\').replace(/'/g,"\\'");
+  var script = "cpx_apply('" + p + "', " + (replace ? 'true' : 'false') + ")";
+  csi.evalScript(script, function(r){
+    r = String(r || '');
+    if (r.indexOf('OK:') === 0){
+      var n = r.substring(3);
+      setRes('已处理 ' + n + ' 个图层 → ' + (prefix === '' ? '去前缀' : "前缀 " + prefix), false);
+    } else if (r.indexOf('ERR:') === 0){
+      var m = r.substring(4);
+      if (m === 'no layer selected') setRes('请先选中至少一个图层', true);
+      else if (m === 'no document') setRes('请先打开一个 PSD', true);
+      else setRes('出错: ' + m, true);
+    } else {
+      setRes('返回: ' + r, true);
+    }
+  });
+}
+</script>
+</body>
+</html>

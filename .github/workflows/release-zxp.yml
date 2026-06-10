@@ -11,6 +11,11 @@ on:
 permissions:
   contents: write          # 创建 Release / 上传产物需要
 
+# 让所有 JS action 跑在 Node 24 上(checkout/upload-artifact/gh-release 默认还是 Node 20,
+# 2026-06-16 后会被强制切换;这里提前 opt-in,消除弃用告警)。
+env:
+  FORCE_JAVASCRIPT_ACTIONS_TO_NODE24: true
+
 jobs:
   build:
     runs-on: windows-latest

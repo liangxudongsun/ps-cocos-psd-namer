@@ -15,6 +15,10 @@
   button:active{background:#2b6cb0;border-color:#2b6cb0;color:#fff;}
   button.prim{background:#2b6cb0;border-color:#2b6cb0;color:#fff;}
   button.warnb{border-color:#7a5;color:#d6a32a;}
+  button:disabled{opacity:.38;cursor:not-allowed;border-style:dashed;}
+  button:disabled:hover{background:#3d3d3d;}
+  .wiptag{display:inline-block;margin-left:6px;padding:0 5px;border-radius:8px;
+    background:#5a3a3a;color:#e0a;font-size:9.5px;vertical-align:middle;}
   .full{grid-column:1 / -1;}
   .opt{display:flex;align-items:center;gap:6px;margin:8px 2px 2px;color:#bbb;}
   .res{margin-top:10px;padding:7px 8px;border:1px solid #444;border-radius:4px;
@@ -27,34 +31,30 @@
 <body>
 <div class="wrap">
 
-  <h4>类型 · 组件</h4>
+  <h4>可用功能</h4>
   <div class="grid">
-    <button onclick="apply('btn_')">btn_ 按钮</button>
-    <button onclick="apply('lbl_')">lbl_ 文本</button>
-    <button onclick="apply('rt_')">rt_ 富文本</button>
-    <button onclick="apply('sp_')">sp_ 九宫格</button>
-    <button onclick="apply('node_')">node_ 容器</button>
-    <button onclick="apply('mask_')">mask_ 遮罩</button>
-    <button onclick="apply('edit_')">edit_ 输入框</button>
-    <button onclick="apply('prog_')">prog_ 进度条</button>
-    <button onclick="apply('tog_')">tog_ 开关</button>
-  </div>
-
-  <h4>布局 · 容器</h4>
-  <div class="grid">
-    <button onclick="apply('lay_v_')">lay_v_ 纵向</button>
-    <button onclick="apply('lay_h_')">lay_h_ 横向</button>
-    <button onclick="apply('lay_grid_')">lay_grid_ 网格</button>
-    <button onclick="apply('sv_')">sv_ 滚动视图</button>
-  </div>
-
-  <h4>忽略 · 标记</h4>
-  <div class="grid">
-    <button onclick="apply('ref_')">ref_ 参考</button>
-    <button onclick="apply('tmp_')">tmp_ 临时</button>
-    <button onclick="apply('//')">// 注释</button>
-    <button onclick="apply('!')">! 忽略</button>
+    <button class="prim" onclick="apply('btn_')">btn_ 按钮</button>
+    <button class="warnb" onclick="apply('!')">! 忽略</button>
     <button class="warnb full" onclick="apply('')">去掉前缀（还原）</button>
+  </div>
+
+  <h4>其他类型 <span class="wiptag">功能未实现</span></h4>
+  <div class="grid">
+    <button disabled title="功能未实现，暂不可用">lbl_ 文本</button>
+    <button disabled title="功能未实现，暂不可用">rt_ 富文本</button>
+    <button disabled title="功能未实现，暂不可用">sp_ 九宫格</button>
+    <button disabled title="功能未实现，暂不可用">node_ 容器</button>
+    <button disabled title="功能未实现，暂不可用">mask_ 遮罩</button>
+    <button disabled title="功能未实现，暂不可用">edit_ 输入框</button>
+    <button disabled title="功能未实现，暂不可用">prog_ 进度条</button>
+    <button disabled title="功能未实现，暂不可用">tog_ 开关</button>
+    <button disabled title="功能未实现，暂不可用">lay_v_ 纵向</button>
+    <button disabled title="功能未实现，暂不可用">lay_h_ 横向</button>
+    <button disabled title="功能未实现，暂不可用">lay_grid_ 网格</button>
+    <button disabled title="功能未实现，暂不可用">sv_ 滚动视图</button>
+    <button disabled title="功能未实现，暂不可用">ref_ 参考</button>
+    <button disabled title="功能未实现，暂不可用">tmp_ 临时</button>
+    <button disabled title="功能未实现，暂不可用">// 注释</button>
   </div>
 
   <div class="opt">
@@ -64,8 +64,10 @@
 
   <div class="res" id="res">选中一个或多个图层，点上面的按钮加前缀。</div>
 
-  <div class="hint">前缀含义见 <small>PSD命名规范.md</small>。规范由 cocos-psd-prefab-2x 转换器解析。<br>
-    支持多选图层批量改名;再点别的前缀会自动替换。</div>
+  <div class="hint">当前仅 <small>btn_ 按钮</small> 与 <small>! 忽略</small> 已接入转换器:<br>
+    · btn_ → 转 prefab 时生成 cc.Button，节点名加 <small>Btn_</small> 前缀;<br>
+    · ! → 该图层及其所有子图层都不导出(整组跳过)。<br>
+    支持多选图层批量改名;再点别的按钮会自动替换前缀。其他类型待实现。</div>
 </div>
 
 <script>

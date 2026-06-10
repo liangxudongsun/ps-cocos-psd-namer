@@ -52,28 +52,40 @@ function cpx_layerIDByIndex(idx){
 // returns array of selected layer IDs (handles multi-select; falls back to active layer)
 function cpx_selectedIDs(){
     var ids = [];
-    var ref = new ActionReference();
-    ref.putProperty(charIDToTypeID("Prpr"), stringIDToTypeID("targetLayers"));
-    ref.putEnumerated(charIDToTypeID("Dcmn"), charIDToTypeID("Ordn"), charIDToTypeID("Trgt"));
-    var desc = executeActionGet(ref);
-    if (desc.hasKey(stringIDToTypeID("targetLayers"))){
-        var list = desc.getList(stringIDToTypeID("targetLayers"));
-        var bg = cpx_hasBackground();
-        for (var i = 0; i < list.count; i++){
-            var idx = list.getReference(i).getIndex();
-            // when there is NO background layer, layer indices are 1-based for AM
-            ids.push(cpx_layerIDByIndex(idx + (bg ? 0 : 1)));
+    try {
+        var ref = new ActionReference();
+        ref.putProperty(charIDToTypeID("Prpr"), stringIDToTypeID("targetLayers"));
+        ref.putEnumerated(charIDToTypeID("Dcmn"), charIDToTypeID("Ordn"), charIDToTypeID("Trgt"));
+        var desc = executeActionGet(ref);
+        if (desc.hasKey(stringIDToTypeID("targetLayers"))){
+            var list = desc.getList(stringIDToTypeID("targetLayers"));
+            var bg = cpx_hasBackground();
+            for (var i = 0; i < list.count; i++){
+                // guard each item so one bad index can't drop the rest of the selection
+                try {
+                    var idx = list.getReference(i).getIndex();
+                    // when there is NO background layer, layer indices are 1-based for AM
+                    ids.push(cpx_layerIDByIndex(idx + (bg ? 0 : 1)));
+                } catch (e1) {}
+            }
         }
-    } else {
-        // single layer selected -> read its id directly
+    } catch (e) {}
+    // fallback: exactly one layer selected (no targetLayers list) -> read its id directly
+    if (!ids.length){
         try {
             var r2 = new ActionReference();
             r2.putProperty(charIDToTypeID("Prpr"), stringIDToTypeID("layerID"));
             r2.putEnumerated(charIDToTypeID("Lyr "), charIDToTypeID("Ordn"), charIDToTypeID("Trgt"));
             ids.push(executeActionGet(r2).getInteger(stringIDToTypeID("layerID")));
-        } catch (e) {}
+        } catch (e2) {}
     }
-    return ids;
+    // de-dup (defensive: never rename the same layer twice)
+    var seen = {}, uniq = [];
+    for (var k = 0; k < ids.length; k++){
+        var v = ids[k];
+        if (v != null && !seen[v]){ seen[v] = true; uniq.push(v); }
+    }
+    return uniq;
 }
 
 function cpx_getNameByID(id){
@@ -101,16 +113,19 @@ function cpx_apply(prefix, replace){
     if (!app.documents.length) return 'ERR:no document';
     var ids = cpx_selectedIDs();
     if (!ids.length) return 'ERR:no layer selected';
-    var n = 0;
-    try {
-        for (var i = 0; i < ids.length; i++){
+    var done = 0, failed = 0, lastErr = '';
+    // per-layer try/catch: one failing layer must NOT abort the rest of the batch
+    for (var i = 0; i < ids.length; i++){
+        try {
             var cur = cpx_getNameByID(ids[i]);
             var nn  = cpx_newName(cur, prefix, replace);
             if (nn !== cur){ cpx_setNameByID(ids[i], nn); }
-            n++;
+            done++;
+        } catch (e) {
+            failed++; lastErr = e.toString();
         }
-    } catch (e) {
-        return 'ERR:' + e.toString();
     }
-    return 'OK:' + n;
+    if (done === 0) return 'ERR:' + (lastErr || 'rename failed');
+    if (failed > 0) return 'OK:' + done + '/' + ids.length; // partial: panel shows "X/Y"
+    return 'OK:' + done;
 }

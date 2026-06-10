@@ -154,8 +154,14 @@ function cpx_diag(){
                 try {
                     var idx = list.getReference(i).getIndex();
                     var id = cpx_layerIDByIndex(idx + (bg ? 0 : 1));
-                    line += 'idx=' + idx + ' id=' + id;
-                    try { line += " name='" + cpx_getNameByID(id) + "'"; } catch (en) { line += ' name=?'; }
+                    line += 'id=' + id;
+                    try {
+                        var nm = cpx_getNameByID(id);
+                        line += " '" + nm + "'";
+                        // 预测点 btn_ 会怎样
+                        var nn = cpx_newName(nm, 'btn_', true);
+                        line += (nn === nm) ? "  =>btn_: 不变(已有前缀)" : ("  =>btn_: '" + nn + "' 会改名");
+                    } catch (en) { line += ' name=?'; }
                 } catch (e1) { line += 'ERR ' + e1; }
                 out.push(line);
             }

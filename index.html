@@ -64,6 +64,8 @@
 
   <div class="res" id="res">选中一个或多个图层，点上面的按钮加前缀。</div>
 
+  <button class="full" style="margin-top:6px;font-size:11px;" onclick="diag()">🔍 诊断选区（多选不生效时点这里）</button>
+
   <div class="hint">当前仅 <small>btn_ 按钮</small> 与 <small>! 忽略</small> 已接入转换器:<br>
     · btn_ → 转 prefab 时生成 cc.Button，节点名加 <small>Btn_</small> 前缀;<br>
     · ! → 该图层及其所有子图层都不导出(整组跳过)。<br>
@@ -104,6 +106,13 @@ function apply(prefix){
     } else {
       setRes('返回: ' + r, true);
     }
+  });
+}
+
+// 诊断：把 ExtendScript 看到的选区信息原样显示出来，便于排查多选问题。
+function diag(){
+  csi.evalScript('cpx_diag()', function(r){
+    setRes(String(r || '(无返回)'), false);
   });
 }
 </script>

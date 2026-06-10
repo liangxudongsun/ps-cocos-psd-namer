@@ -53,8 +53,10 @@ function cpx_layerIDByIndex(idx){
 function cpx_selectedIDs(){
     var ids = [];
     try {
+        // canonical form: read the WHOLE target-document descriptor, then look for
+        // the targetLayers list. (Requesting only the property via putProperty is
+        // unreliable on some PS builds and can make multi-select look like single.)
         var ref = new ActionReference();
-        ref.putProperty(charIDToTypeID("Prpr"), stringIDToTypeID("targetLayers"));
         ref.putEnumerated(charIDToTypeID("Dcmn"), charIDToTypeID("Ordn"), charIDToTypeID("Trgt"));
         var desc = executeActionGet(ref);
         if (desc.hasKey(stringIDToTypeID("targetLayers"))){
@@ -128,4 +130,38 @@ function cpx_apply(prefix, replace){
     if (done === 0) return 'ERR:' + (lastErr || 'rename failed');
     if (failed > 0) return 'OK:' + done + '/' + ids.length; // partial: panel shows "X/Y"
     return 'OK:' + done;
+}
+
+// DIAGNOSTIC — called by the panel's 诊断 button. Reports exactly what the
+// selection-reading code sees, so multi-select problems can be pinpointed.
+function cpx_diag(){
+    if (!app.documents.length) return 'ERR:no document';
+    var out = [];
+    var bg = cpx_hasBackground();
+    out.push('background=' + bg);
+    try {
+        var ref = new ActionReference();
+        ref.putEnumerated(charIDToTypeID("Dcmn"), charIDToTypeID("Ordn"), charIDToTypeID("Trgt"));
+        var desc = executeActionGet(ref);
+        var key = stringIDToTypeID("targetLayers");
+        var hasKey = desc.hasKey(key);
+        out.push('hasTargetLayers=' + hasKey);
+        if (hasKey){
+            var list = desc.getList(key);
+            out.push('listCount=' + list.count);
+            for (var i = 0; i < list.count; i++){
+                var line = '  [' + i + '] ';
+                try {
+                    var idx = list.getReference(i).getIndex();
+                    var id = cpx_layerIDByIndex(idx + (bg ? 0 : 1));
+                    line += 'idx=' + idx + ' id=' + id;
+                    try { line += " name='" + cpx_getNameByID(id) + "'"; } catch (en) { line += ' name=?'; }
+                } catch (e1) { line += 'ERR ' + e1; }
+                out.push(line);
+            }
+        }
+    } catch (e) { out.push('EXC ' + e); }
+    var ids = cpx_selectedIDs();
+    out.push('cpx_selectedIDs -> ' + ids.length + ' [' + ids.join(',') + ']');
+    return 'DIAG\n' + out.join('\n');
 }

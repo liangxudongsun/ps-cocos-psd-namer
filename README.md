@@ -3,6 +3,9 @@
 配套 **cocos-psd-prefab-2x** 的 Photoshop 面板:**选中图层 → 点按钮 → 批量给图层名加前缀**
 (`btn_`/`lay_v_`/`sv_`…),让美术按转换器认得的命名规范快速标注图层。
 
+> **配套工具**:[cocos-psd-prefab-2x](https://github.com/shiliyu1991-lang/cocos-psd-prefab-2x)
+> —— Cocos Creator 2.4.x 的 PSD→预制体转换器,解析本插件标注的命名规范并生成节点树。
+
 - 支持**多选**图层一次批量改名。
 - 切换前缀会**自动去掉旧的类型前缀**再加新的(可在面板里关掉)。
 - 一键**去前缀还原**;也能标注 `// 注释` / `! 忽略` / `ref_` / `tmp_`。

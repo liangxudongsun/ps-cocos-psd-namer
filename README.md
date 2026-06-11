@@ -1,118 +1,120 @@
-# Cocos PSD Namer — Photoshop 图层命名插件（CEP）
+# Cocos PSD Namer — Photoshop Layer Naming Plugin (CEP)
 
-配套 **cocos-psd-prefab-2x** 的 Photoshop 面板:**选中图层 → 点按钮 → 批量给图层名加前缀**
-(`btn_`/`lay_v_`/`sv_`…),让美术按转换器认得的命名规范快速标注图层。
+**English** · [中文](./README.zh-CN.md)
 
-> **配套工具**:[cocos-psd-prefab-2x](https://github.com/shiliyu1991-lang/cocos-psd-prefab-2x)
-> —— Cocos Creator 2.4.x 的 PSD→预制体转换器,解析本插件标注的命名规范并生成节点树。
+A Photoshop panel that pairs with **cocos-psd-prefab-2x**: **select layers → click a button → batch-prefix the layer names**
+(`btn_`/`lay_v_`/`sv_`…), letting artists quickly tag layers using the naming convention the converter recognizes.
 
-- 支持**多选**图层一次批量改名。
-- 切换前缀会**自动去掉旧的类型前缀**再加新的(可在面板里关掉)。
-- 一键**去前缀还原**;也能标注 `// 注释` / `! 忽略` / `ref_` / `tmp_`。
-- 兼容 **Photoshop CC2015 ~ 2025**(CEP 6+)。
+> **Companion tool**: [cocos-psd-prefab-2x](https://github.com/shiliyu1991-lang/cocos-psd-prefab-2x)
+> — a PSD→prefab converter for Cocos Creator 2.4.x that parses the naming convention this plugin applies and generates a node tree.
 
-## 按钮对应（与转换器一致）
+- Supports **multi-select** to rename several layers at once.
+- Switching prefixes **automatically strips the old type prefix** before adding the new one (can be disabled in the panel).
+- One-click **prefix removal** to restore names; also supports tagging `// comment` / `! ignore` / `ref_` / `tmp_`.
+- Compatible with **Photoshop CC2015 ~ 2025** (CEP 6+).
 
-| 按钮 | 加的前缀 | 转换后 |
+## Button Mapping (matches the converter)
+
+| Button | Prefix Added | Converts To |
 |------|----------|--------|
-| btn_ 按钮 | `btn_` | cc.Button |
-| lbl_ 文本 / rt_ 富文本 | `lbl_` / `rt_` | Label / RichText |
-| sp_ 九宫格 | `sp_` | 九宫格 Sprite(记得名字后再补 `#上,右,下,左`) |
-| node_ / mask_ / edit_ / prog_ / tog_ | 同名 | 空容器 / Mask / EditBox / ProgressBar / Toggle |
-| lay_v_ / lay_h_ / lay_grid_ | 同名 | 带 Layout 的容器(纵/横/网格) |
-| sv_ 滚动视图 | `sv_` | cc.ScrollView |
-| ref_ / tmp_ / // / ! | 同名 | 转换时**忽略**该层 |
-| 去掉前缀 | (清空) | 还原成无前缀 |
+| btn_ Button | `btn_` | cc.Button |
+| lbl_ Label / rt_ RichText | `lbl_` / `rt_` | Label / RichText |
+| sp_ Sliced | `sp_` | Sliced Sprite (remember to append `#top,right,bottom,left` after the name) |
+| node_ / mask_ / edit_ / prog_ / tog_ | same name | Empty container / Mask / EditBox / ProgressBar / Toggle |
+| lay_v_ / lay_h_ / lay_grid_ | same name | Container with Layout (vertical / horizontal / grid) |
+| sv_ ScrollView | `sv_` | cc.ScrollView |
+| ref_ / tmp_ / // / ! | same name | Layer is **ignored** during conversion |
+| Remove Prefix | (cleared) | Restored to no prefix |
 
-## 安装
+## Installation
 
-### 方式 A：一键安装（推荐，Windows）
+### Option A: One-Click Install (recommended, Windows)
 
-双击仓库里的 **`install.bat`** 即可，它会自动：
+Just double-click **`install.bat`** in the repo. It automatically:
 
-1. 把扩展拷到 `%APPDATA%\Adobe\CEP\extensions\com.cocos.psdnamer\`；
-2. 给 `CSXS.6 ~ CSXS.12` 写入 `PlayerDebugMode=1`（允许未签名扩展，省去手动改注册表）。
+1. Copies the extension to `%APPDATA%\Adobe\CEP\extensions\com.cocos.psdnamer\`;
+2. Writes `PlayerDebugMode=1` for `CSXS.6 ~ CSXS.12` (allows unsigned extensions, so you don't have to edit the registry by hand).
 
-全程写 `HKCU` + `%APPDATA%`，**不需要管理员权限**。装完**完全退出并重启 Photoshop**，
-在菜单 **窗口 / 扩展功能(旧版) → Cocos PSD Namer** 打开面板即可。
+The whole process only writes to `HKCU` + `%APPDATA%`, so **no administrator privileges are needed**. After installing, **fully quit and restart Photoshop**,
+then open the panel from the menu **Window > Extensions (legacy) → Cocos PSD Namer**.
 
-> 卸载：双击 **`uninstall.bat`**。
+> Uninstall: double-click **`uninstall.bat`**.
 
 ---
 
-### 方式 B：手动安装（一次性）
+### Option B: Manual Install (one-time)
 
-### 1. 放到 CEP 扩展目录
-把本文件夹(含 `CSXS/`、`index.html`、`host.jsx`)整个复制到,并改名为 `com.cocos.psdnamer`:
+### 1. Place It in the CEP Extensions Directory
+Copy this entire folder (including `CSXS/`, `index.html`, `host.jsx`) into the location below, renaming it to `com.cocos.psdnamer`:
 
-- **Windows**:`C:\Users\<你的用户名>\AppData\Roaming\Adobe\CEP\extensions\com.cocos.psdnamer\`
-- **macOS**:`~/Library/Application Support/Adobe/CEP/extensions/com.cocos.psdnamer/`
+- **Windows**: `C:\Users\<your-username>\AppData\Roaming\Adobe\CEP\extensions\com.cocos.psdnamer\`
+- **macOS**: `~/Library/Application Support/Adobe/CEP/extensions/com.cocos.psdnamer/`
 
-(没有 `CEP\extensions` 目录就手动新建。)
+(If the `CEP\extensions` directory doesn't exist, create it manually.)
 
-### 方式 C：打包 .zxp 分发给团队（免 PlayerDebugMode）
+### Option C: Package a .zxp for Team Distribution (no PlayerDebugMode)
 
-想发给同事、不让他们碰注册表，就把扩展打包成已签名的 `.zxp`：
+If you want to hand it to colleagues without making them touch the registry, package the extension as a signed `.zxp`:
 
-1. 到 [Adobe CEP-Resources](https://github.com/Adobe-CEP/CEP-Resources) 下载 `ZXPSignCmd.exe`，
-   放到本文件夹旁边（或 `tools\` 子目录，或加入 PATH）；
-2. 双击 **`build-zxp.bat`** —— 它会自动生成自签证书并打包出 `cocos-psd-namer.zxp`。
+1. Download `ZXPSignCmd.exe` from [Adobe CEP-Resources](https://github.com/Adobe-CEP/CEP-Resources),
+   and place it next to this folder (or in a `tools\` subdirectory, or add it to PATH);
+2. Double-click **`build-zxp.bat`** — it automatically generates a self-signed certificate and packages `cocos-psd-namer.zxp`.
 
-同事拿到 `.zxp` 后，用 [ZXP Installer](https://aescripts.com/learn/zxp-installer/) 或
-Anastasiy's Extension Manager **拖入即可安装**，无需开 PlayerDebugMode。
+Once colleagues have the `.zxp`, they can **install it by dragging it in** with [ZXP Installer](https://aescripts.com/learn/zxp-installer/) or
+Anastasiy's Extension Manager — no need to enable PlayerDebugMode.
 
-> 注：`cert.p12`（含私钥）和 `*.zxp` 已被 `.gitignore` 忽略，不会误传到仓库。
+> Note: `cert.p12` (which contains the private key) and `*.zxp` are already ignored by `.gitignore`, so they won't accidentally be pushed to the repo.
 
-**自动发布（GitHub Actions）**：推一个 `v*` tag 即可让 CI 自动打包并把 `.zxp` 挂到 Release：
+**Automated Release (GitHub Actions)**: push a `v*` tag to have CI automatically package and attach the `.zxp` to a Release:
 
 ```bash
 git tag v1.0.0 && git push origin v1.0.0
 ```
 
-工作流 `.github/workflows/release-zxp.yml` 会在 `windows-latest` 上自动下载
-`ZXPSignCmd`、现场生成自签证书、签名打包 —— **无需配置任何 Secret**。
-（也可在 Actions 页面手动触发，产物作为 artifact 下载。）
+The workflow `.github/workflows/release-zxp.yml` runs on `windows-latest` and automatically downloads
+`ZXPSignCmd`, generates a self-signed certificate on the fly, and signs and packages the extension — **no Secrets to configure**.
+(You can also trigger it manually from the Actions page and download the result as an artifact.)
 
 ---
 
-### 2. 允许未签名扩展(PlayerDebugMode)
-本扩展未做 ZXP 签名,需开启调试模式:
+### 2. Allow Unsigned Extensions (PlayerDebugMode)
+This extension isn't ZXP-signed, so you need to enable debug mode:
 
-- **Windows**:`Win+R` 输入 `regedit`,定位到 `HKEY_CURRENT_USER\Software\Adobe\CSXS.11`
-  (没有就新建项;不同 PS 版本可能是 `CSXS.9 / .10 / .11 / .12`,都建一遍最稳),
-  新建**字符串值** `PlayerDebugMode`,数据填 `1`。
-- **macOS**:终端执行(各版本都设一遍)
+- **Windows**: press `Win+R`, type `regedit`, and navigate to `HKEY_CURRENT_USER\Software\Adobe\CSXS.11`
+  (create the key if it doesn't exist; different PS versions may use `CSXS.9 / .10 / .11 / .12`, so creating them all is the safest bet),
+  then add a **String value** named `PlayerDebugMode` with the data set to `1`.
+- **macOS**: run the following in Terminal (set it once per version)
   ```bash
   defaults write com.adobe.CSXS.11 PlayerDebugMode 1
   defaults write com.adobe.CSXS.12 PlayerDebugMode 1
   ```
 
-### 3. 重启 Photoshop
-菜单 **窗口 / 扩展功能(旧版)→ Cocos PSD Namer**(Window > Extensions (legacy))打开面板。
+### 3. Restart Photoshop
+Open the panel from the menu **Window > Extensions (legacy) → Cocos PSD Namer**.
 
-## 用法
+## Usage
 
-1. 在图层面板里选中一个或多个图层(可 Ctrl/Shift 多选)。
-2. 点面板上对应的前缀按钮即可批量改名。
-3. 想换前缀,直接点另一个按钮(默认会替换旧前缀);想还原点「去掉前缀」。
+1. Select one or more layers in the Layers panel (use Ctrl/Shift for multi-select).
+2. Click the matching prefix button in the panel to batch-rename them.
+3. To change the prefix, just click another button (by default it replaces the old prefix); to restore, click "Remove Prefix".
 
-## 说明 / 限制
+## Notes / Limitations
 
-- `host.jsx` 用 ActionManager 读取/重命名**选中图层**(按图层 ID 改名,支持多选,
-  不会改变当前选择)。每次改名是一步可撤销的历史记录。
-- 这是开发态加载(未签名)。要分发给团队可用 Adobe `ZXPSignCmd` 打包成 `.zxp` 再用
-  Anastasiy's Extension Manager / UPIA 安装,就不需要 PlayerDebugMode。
-- 若打开面板按钮无反应:确认 PlayerDebugMode 已设、PS 已重启;部分版本菜单在
-  「窗口 / 扩展功能」而非「(旧版)」。
+- `host.jsx` uses ActionManager to read/rename the **selected layers** (renaming by layer ID, with multi-select support,
+  without changing the current selection). Each rename is a single undoable history step.
+- This is a development-mode load (unsigned). To distribute it to your team, use Adobe `ZXPSignCmd` to package it as a `.zxp` and install it via
+  Anastasiy's Extension Manager / UPIA, which removes the need for PlayerDebugMode.
+- If the panel buttons don't respond: confirm PlayerDebugMode is set and Photoshop has been restarted; on some versions the menu is under
+  "Window > Extensions" rather than "(legacy)".
 
-## 目录结构
+## Directory Structure
 
 ```
 com.cocos.psdnamer/
-├── CSXS/manifest.xml   扩展清单(host=PHXS, panel)
-├── index.html          面板 UI(按钮 + 逻辑,内置极简 CSInterface)
-├── host.jsx            ExtendScript:按 ID 给选中图层加/换/去前缀
-├── install.bat         一键安装(拷贝 + 开 PlayerDebugMode)
-├── uninstall.bat       一键卸载
-└── build-zxp.bat       打包成已签名 .zxp(自签证书,供团队分发)
+├── CSXS/manifest.xml   Extension manifest (host=PHXS, panel)
+├── index.html          Panel UI (buttons + logic, minimal built-in CSInterface)
+├── host.jsx            ExtendScript: add / replace / remove prefixes on selected layers by ID
+├── install.bat         One-click install (copy + enable PlayerDebugMode)
+├── uninstall.bat       One-click uninstall
+└── build-zxp.bat       Package into a signed .zxp (self-signed cert, for team distribution)
 ```

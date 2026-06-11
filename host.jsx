@@ -23,8 +23,11 @@ function cpx_strip(name){
 
 // compute the new name for a given current name + chosen prefix
 function cpx_newName(name, prefix, replace){
+    // "clear prefix" is an explicit reset — it must ALWAYS strip, regardless of
+    // the "replace old prefix" checkbox. (Otherwise unchecking the box silently
+    // turns 去掉前缀 into a no-op, which also made !/// look like they "broke" it.)
+    if (prefix === '')   return cpx_strip(name);
     var base = replace ? cpx_strip(name) : String(name);
-    if (prefix === '')   return base;                 // clear prefix
     if (prefix === '//') return '// ' + base;         // mark as comment/ignore
     if (prefix === '!')  return '!' + base;           // mark as ignore
     if (cpx_lc(base).indexOf(cpx_lc(prefix)) === 0) return base; // already has it

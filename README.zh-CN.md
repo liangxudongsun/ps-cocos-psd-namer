@@ -28,17 +28,29 @@
 
 ## 安装
 
-### 方式 A：一键安装（推荐，Windows）
+### 方式 A：一键安装（推荐）
 
-双击仓库里的 **`install.bat`** 即可，它会自动：
+**Windows** —— 双击仓库里的 **`install.bat`** 即可，它会自动：
 
 1. 把扩展拷到 `%APPDATA%\Adobe\CEP\extensions\com.cocos.psdnamer\`；
 2. 给 `CSXS.6 ~ CSXS.12` 写入 `PlayerDebugMode=1`（允许未签名扩展，省去手动改注册表）。
 
-全程写 `HKCU` + `%APPDATA%`，**不需要管理员权限**。装完**完全退出并重启 Photoshop**，
-在菜单 **窗口 / 扩展功能(旧版) → Cocos PSD Namer** 打开面板即可。
+全程写 `HKCU` + `%APPDATA%`，**不需要管理员权限**。
 
-> 卸载：双击 **`uninstall.bat`**。
+**macOS** —— 双击 **`install.command`**（或在终端执行 `bash install.command`），等效地：
+
+1. 把扩展拷到 `~/Library/Application Support/Adobe/CEP/extensions/com.cocos.psdnamer/`；
+2. 执行 `defaults write com.adobe.CSXS.<6..12> PlayerDebugMode 1`，允许未签名扩展。
+
+**无需 `sudo`** —— 只写自己的 `~/Library` 和用户 defaults。
+
+> macOS 首次运行注意：
+> - 若双击没反应，可能是 clone 后丢了执行权限。先执行一次 `chmod +x install.command uninstall.command`，再双击。
+> - 若被 Gatekeeper 拦（提示「无法打开」），右键文件 → **打开** → **打开**，或执行 `xattr -d com.apple.quarantine install.command`。
+
+两个系统装完都要**完全退出并重启 Photoshop**，再在菜单 **窗口 / 扩展功能(旧版) → Cocos PSD Namer** 打开面板。
+
+> 卸载：**`uninstall.bat`**（Windows）/ **`uninstall.command`**（macOS）。
 
 ---
 
@@ -114,7 +126,9 @@ com.cocos.psdnamer/
 ├── CSXS/manifest.xml   扩展清单(host=PHXS, panel)
 ├── index.html          面板 UI(按钮 + 逻辑,内置极简 CSInterface)
 ├── host.jsx            ExtendScript:按 ID 给选中图层加/换/去前缀
-├── install.bat         一键安装(拷贝 + 开 PlayerDebugMode)
-├── uninstall.bat       一键卸载
+├── install.bat         Windows 一键安装(拷贝 + 开 PlayerDebugMode)
+├── uninstall.bat       Windows 一键卸载
+├── install.command     macOS 一键安装(拷贝 + 开 PlayerDebugMode)
+├── uninstall.command   macOS 一键卸载
 └── build-zxp.bat       打包成已签名 .zxp(自签证书,供团队分发)
 ```

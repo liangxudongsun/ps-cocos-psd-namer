@@ -28,17 +28,29 @@ A Photoshop panel that pairs with **cocos-psd-prefab-2x**: **select layers → c
 
 ## Installation
 
-### Option A: One-Click Install (recommended, Windows)
+### Option A: One-Click Install (recommended)
 
-Just double-click **`install.bat`** in the repo. It automatically:
+**Windows** — just double-click **`install.bat`** in the repo. It automatically:
 
 1. Copies the extension to `%APPDATA%\Adobe\CEP\extensions\com.cocos.psdnamer\`;
 2. Writes `PlayerDebugMode=1` for `CSXS.6 ~ CSXS.12` (allows unsigned extensions, so you don't have to edit the registry by hand).
 
-The whole process only writes to `HKCU` + `%APPDATA%`, so **no administrator privileges are needed**. After installing, **fully quit and restart Photoshop**,
-then open the panel from the menu **Window > Extensions (legacy) → Cocos PSD Namer**.
+The whole process only writes to `HKCU` + `%APPDATA%`, so **no administrator privileges are needed**.
 
-> Uninstall: double-click **`uninstall.bat`**.
+**macOS** — double-click **`install.command`** (or run `bash install.command` in Terminal). It does the equivalent:
+
+1. Copies the extension to `~/Library/Application Support/Adobe/CEP/extensions/com.cocos.psdnamer/`;
+2. Runs `defaults write com.adobe.CSXS.<6..12> PlayerDebugMode 1` so unsigned extensions are allowed.
+
+No `sudo` is needed — it only writes to your home `~/Library` and user defaults.
+
+> macOS first-run notes:
+> - If double-clicking does nothing, the execute bit may be missing after cloning. Run `chmod +x install.command uninstall.command` once, then double-click again.
+> - If Gatekeeper blocks it ("cannot be opened"), right-click the file → **Open** → **Open**, or run `xattr -d com.apple.quarantine install.command`.
+
+After installing, on either OS **fully quit and restart Photoshop**, then open the panel from the menu **Window > Extensions (legacy) → Cocos PSD Namer**.
+
+> Uninstall: **`uninstall.bat`** (Windows) / **`uninstall.command`** (macOS).
 
 ---
 
@@ -114,7 +126,9 @@ com.cocos.psdnamer/
 ├── CSXS/manifest.xml   Extension manifest (host=PHXS, panel)
 ├── index.html          Panel UI (buttons + logic, minimal built-in CSInterface)
 ├── host.jsx            ExtendScript: add / replace / remove prefixes on selected layers by ID
-├── install.bat         One-click install (copy + enable PlayerDebugMode)
-├── uninstall.bat       One-click uninstall
+├── install.bat         One-click install on Windows (copy + enable PlayerDebugMode)
+├── uninstall.bat       One-click uninstall on Windows
+├── install.command     One-click install on macOS (copy + enable PlayerDebugMode)
+├── uninstall.command   One-click uninstall on macOS
 └── build-zxp.bat       Package into a signed .zxp (self-signed cert, for team distribution)
 ```

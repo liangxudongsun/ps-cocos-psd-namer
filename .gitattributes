@@ -1,0 +1,6 @@
+# Shell scripts must keep LF endings or the shebang breaks on macOS.
+*.command text eol=lf
+*.sh      text eol=lf
+
+# Windows batch files stay CRLF.
+*.bat     text eol=crlf

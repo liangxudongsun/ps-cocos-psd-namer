@@ -66,11 +66,15 @@
 
 ### 方式 C：打包 .zxp 分发给团队（免 PlayerDebugMode）
 
-想发给同事、不让他们碰注册表，就把扩展打包成已签名的 `.zxp`：
+想发给同事、不让他们碰注册表，就把扩展打包成已签名的 `.zxp`。
+`.zxp` 是**跨平台**的 —— 同一个文件在 Windows 和 macOS 上都能装，所以只需打包一次。
 
-1. 到 [Adobe CEP-Resources](https://github.com/Adobe-CEP/CEP-Resources) 下载 `ZXPSignCmd.exe`，
-   放到本文件夹旁边（或 `tools\` 子目录，或加入 PATH）；
-2. 双击 **`build-zxp.bat`** —— 它会自动生成自签证书并打包出 `cocos-psd-namer.zxp`。
+- **Windows**：到 [Adobe CEP-Resources](https://github.com/Adobe-CEP/CEP-Resources) 下载 `ZXPSignCmd.exe`
+  （放本文件夹旁、或 `tools\` 子目录、或加入 PATH），双击 **`build-zxp.bat`**。
+- **macOS**：到同一仓库下载 `osx64/ZXPSignCmd`，`chmod +x ZXPSignCmd`，放本文件夹旁
+  （或 `tools/`、或加入 PATH），运行 **`build-zxp.command`**（双击，或 `bash build-zxp.command`）。
+
+两者都会自动生成自签证书并打包出 `cocos-psd-namer.zxp`。
 
 同事拿到 `.zxp` 后，用 [ZXP Installer](https://aescripts.com/learn/zxp-installer/) 或
 Anastasiy's Extension Manager **拖入即可安装**，无需开 PlayerDebugMode。
@@ -86,6 +90,7 @@ git tag v1.0.0 && git push origin v1.0.0
 工作流 `.github/workflows/release-zxp.yml` 会在 `windows-latest` 上自动下载
 `ZXPSignCmd`、现场生成自签证书、签名打包 —— **无需配置任何 Secret**。
 （也可在 Actions 页面手动触发，产物作为 artifact 下载。）
+由于 `.zxp` 跨平台，这个 CI 产物在 macOS 上也能直接安装，**无需额外的 Mac CI 任务**。
 
 ---
 
@@ -130,5 +135,6 @@ com.cocos.psdnamer/
 ├── uninstall.bat       Windows 一键卸载
 ├── install.command     macOS 一键安装(拷贝 + 开 PlayerDebugMode)
 ├── uninstall.command   macOS 一键卸载
-└── build-zxp.bat       打包成已签名 .zxp(自签证书,供团队分发)
+├── build-zxp.bat       Windows 打包成已签名 .zxp(自签证书)
+└── build-zxp.command   macOS 打包成已签名 .zxp(自签证书)
 ```

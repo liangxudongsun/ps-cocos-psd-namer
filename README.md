@@ -66,11 +66,15 @@ Copy this entire folder (including `CSXS/`, `index.html`, `host.jsx`) into the l
 
 ### Option C: Package a .zxp for Team Distribution (no PlayerDebugMode)
 
-If you want to hand it to colleagues without making them touch the registry, package the extension as a signed `.zxp`:
+If you want to hand it to colleagues without making them touch the registry, package the extension as a signed `.zxp`.
+A `.zxp` is **cross-platform** — the same file installs on both Windows and macOS, so you only need to build it once.
 
-1. Download `ZXPSignCmd.exe` from [Adobe CEP-Resources](https://github.com/Adobe-CEP/CEP-Resources),
-   and place it next to this folder (or in a `tools\` subdirectory, or add it to PATH);
-2. Double-click **`build-zxp.bat`** — it automatically generates a self-signed certificate and packages `cocos-psd-namer.zxp`.
+- **Windows**: download `ZXPSignCmd.exe` from [Adobe CEP-Resources](https://github.com/Adobe-CEP/CEP-Resources)
+  (place it next to this folder, in a `tools\` subdirectory, or on PATH), then double-click **`build-zxp.bat`**.
+- **macOS**: download the `osx64/ZXPSignCmd` build from the same repo, `chmod +x ZXPSignCmd`, place it next to this folder
+  (or in `tools/`, or on PATH), then run **`build-zxp.command`** (double-click, or `bash build-zxp.command`).
+
+Either way it auto-generates a self-signed certificate and packages `cocos-psd-namer.zxp`.
 
 Once colleagues have the `.zxp`, they can **install it by dragging it in** with [ZXP Installer](https://aescripts.com/learn/zxp-installer/) or
 Anastasiy's Extension Manager — no need to enable PlayerDebugMode.
@@ -86,6 +90,7 @@ git tag v1.0.0 && git push origin v1.0.0
 The workflow `.github/workflows/release-zxp.yml` runs on `windows-latest` and automatically downloads
 `ZXPSignCmd`, generates a self-signed certificate on the fly, and signs and packages the extension — **no Secrets to configure**.
 (You can also trigger it manually from the Actions page and download the result as an artifact.)
+Since a `.zxp` is cross-platform, this single CI artifact installs on macOS too — no separate Mac CI job is needed.
 
 ---
 
@@ -130,5 +135,6 @@ com.cocos.psdnamer/
 ├── uninstall.bat       One-click uninstall on Windows
 ├── install.command     One-click install on macOS (copy + enable PlayerDebugMode)
 ├── uninstall.command   One-click uninstall on macOS
-└── build-zxp.bat       Package into a signed .zxp (self-signed cert, for team distribution)
+├── build-zxp.bat       Package into a signed .zxp on Windows (self-signed cert)
+└── build-zxp.command   Package into a signed .zxp on macOS (self-signed cert)
 ```
